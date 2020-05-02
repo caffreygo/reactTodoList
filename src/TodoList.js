@@ -1,11 +1,16 @@
 import React, { Component, Fragment } from 'react';
+import './style.css'
+import TodoItem from "./TodoItem"
 
 class TodoList extends Component {
 
   constructor(props) {
     super(props)
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleBtnClick = this.handleBtnClick.bind(this)
+    this.handleItemDelete = this.handleItemDelete.bind(this)
     this.state = {
-      inputValue: 'hello',
+      inputValue: '',
       list: []
     }
   }
@@ -14,24 +19,58 @@ class TodoList extends Component {
     return (
       <Fragment>
         <div>
-          <input value={this.state.inputValue} onChange={this.handleInputChange.bind(this)} />
-          <button>提交</button>
+          <label htmlFor="insertArea">输入内容</label>
+          <input
+            id="insertArea"
+            className="input"
+            value={this.state.inputValue}
+            onChange={this.handleInputChange}
+          />
+          <button onClick={this.handleBtnClick}>提交</button>
         </div>
         <ul>
-          <li>1</li>
-          <li>2</li>
-          <li>3</li>
-          <li>4</li>
+          {this.getTodoItem()}
         </ul>
       </Fragment>
     )
   }
 
+  getTodoItem() {
+    return (
+      this.state.list.map((item, index) => {
+        return (
+          <TodoItem
+            content={item}
+            key={index}
+            index={index}
+            deleteItem={this.handleItemDelete}
+          />
+        )
+      })
+    )
+  }
+
   handleInputChange(e) {
-    this.setState({
-      inputValue: e.target.value
+    const value = e.target.value
+    this.setState(() => ({
+      inputValue: value
+    }))
+  }
+
+  handleBtnClick() {
+    if (this.state.inputValue.trim().length === 0) return
+    this.setState((prevState) => ({
+      list: [...prevState.list, prevState.inputValue],
+      inputValue: ''
+    }))
+  }
+
+  handleItemDelete(index) {
+    this.setState((prevState) => {
+      const list = [...prevState.list]
+      list.splice(index, 1)
+      return { list }
     })
-    console.log(this.state)
   }
 }
 

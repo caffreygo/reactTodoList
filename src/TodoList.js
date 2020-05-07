@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import './style.css'
 import TodoItem from "./TodoItem"
+import Axios from 'axios';
 
 class TodoList extends Component {
 
@@ -15,6 +16,16 @@ class TodoList extends Component {
     }
   }
 
+  componentDidMount() {
+    Axios.get('api/todolist').then(res => {
+      this.setState(() => ({
+        list: [...res.data]
+      }))
+    }).catch(err => {
+      console.warn(err)
+    })
+  }
+
   render() {
     return (
       <Fragment>
@@ -23,6 +34,7 @@ class TodoList extends Component {
           <input
             id="insertArea"
             className="input"
+            ref={(input) => { this.input = input }}
             value={this.state.inputValue}
             onChange={this.handleInputChange}
           />
